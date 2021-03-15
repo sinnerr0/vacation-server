@@ -28,7 +28,7 @@ var fs = require("fs");
 var path = require("path");
 var PDFImage = require("pdf-image").PDFImage;
 
-app.post("api/diet", upload.single("pdf"), (req, res) => {
+app.post("/api/diet", upload.single("pdf"), (req, res) => {
   if (req.file && req.file.mimetype === "application/pdf") {
     var filePath = req.file.path;
     var pdfImage = new PDFImage(filePath);
