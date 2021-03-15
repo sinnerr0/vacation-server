@@ -40,7 +40,7 @@ app.post("/api/diet", upload.single("pdf"), (req, res) => {
             return;
           }
           var pngPath = __dirname + path.sep + imagePath;
-          var destPath = "/var/www/html/diet.png";
+          var destPath = "/home/ubuntu/www/diet.png";
           fs.rename(pngPath, destPath, (err) => {
             if (err) {
               fs.rename(pngPath, "uploads/diet.png", (err) => {
