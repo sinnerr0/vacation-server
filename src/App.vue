@@ -159,7 +159,7 @@ export default {
       try {
         await axios.post(`${process.env.VUE_APP_SERVER}api/diet`, form);
       } finally {
-        this.diet = `${process.env.VUE_APP_SERVER}diet.png`;
+        this.diet = `${process.env.VUE_APP_SERVER}diet.png?nocache=${Date.now()}`;
       }
     },
     startTimer() {
