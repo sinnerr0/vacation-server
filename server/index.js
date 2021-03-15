@@ -29,7 +29,12 @@ var path = require("path");
 var PDFImage = require("pdf-image").PDFImage;
 
 app.post("/api/diet", upload.single("pdf"), (req, res) => {
-  if (req.file && req.file.mimetype === "application/pdf") {
+  if (
+    req.body &&
+    req.body.key === "kschoi@alcherainc.com" &&
+    req.file &&
+    req.file.mimetype === "application/pdf"
+  ) {
     var filePath = req.file.path;
     var pdfImage = new PDFImage(filePath);
     pdfImage.convertPage(0).then(

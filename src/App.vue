@@ -92,6 +92,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn @click="onClickChangeDiet" :disabled="!pdf">Change</v-btn>
+            <v-text-field v-model="key" label="Change Key Code"></v-text-field>
             <v-file-input
               v-model="pdf"
               accept="application/pdf"
@@ -114,6 +115,7 @@ export default {
       vacation: { vacationTodayList: [], vacationWeekList: [] },
       diet: `${process.env.VUE_APP_SERVER}diet.png`,
       pdf: null,
+      key: '',
       timerObj: null,
     };
   },
@@ -148,6 +150,7 @@ export default {
       this.diet = "";
       let form = new FormData();
       form.append("pdf", this.pdf);
+      form.append("key", this.key);
       try {
         await axios.post(`${process.env.VUE_APP_SERVER}api/diet`, form);
       } finally {
