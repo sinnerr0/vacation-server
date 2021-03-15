@@ -24,15 +24,11 @@ let upload = multer({ dest: "uploads/" });
 //////////////////
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("ok");
-});
-
 var fs = require("fs");
 var path = require("path");
 var PDFImage = require("pdf-image").PDFImage;
 
-app.post("/diet", upload.single("pdf"), (req, res) => {
+app.post("api/diet", upload.single("pdf"), (req, res) => {
   if (req.file && req.file.mimetype === "application/pdf") {
     var filePath = req.file.path;
     var pdfImage = new PDFImage(filePath);
