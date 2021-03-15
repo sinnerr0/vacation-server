@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app color="white" dark>
       <div class="d-flex align-center">
-        <h1 class="text-h4 black--text">Vacation</h1>
+        <h1 class="text-h4 black--text">Alchera Dashboard</h1>
       </div>
     </v-app-bar>
 
@@ -13,7 +13,9 @@
           <v-card-text>
             <v-list disabled>
               <v-list-item-group color="primary">
-                <v-list-item v-if="!loading && !vacation.vacationTodayList.length">
+                <v-list-item
+                  v-if="!loading && !vacation.vacationTodayList.length"
+                >
                   <v-list-item-content>
                     <v-list-item-title
                       >오늘은 휴가자가 없습니다.</v-list-item-title
@@ -74,6 +76,30 @@
             </v-list>
           </v-card-text>
         </v-card>
+
+        <v-card style="margin-top: 10px">
+          <v-card-title>Diet</v-card-title>
+          <v-card-text>
+            <v-list disabled>
+              <v-list-item-group color="primary">
+                <v-list-item>
+                  <v-list-item-content>
+                    <img :src="diet" />
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="onClickChangeDiet" :disabled="!pdf">Change</v-btn>
+            <v-file-input
+              v-model="pdf"
+              accept="application/pdf"
+              label="PDF File Input"
+              truncate-length="100"
+            ></v-file-input>
+          </v-card-actions>
+        </v-card>
       </v-container>
     </v-main>
   </v-app>
@@ -86,6 +112,8 @@ export default {
     return {
       loading: false,
       vacation: { vacationTodayList: [], vacationWeekList: [] },
+      diet: `${process.env.VUE_APP_SERVER}diet.png`,
+      pdf: null,
       timerObj: null,
     };
   },
@@ -114,6 +142,16 @@ export default {
         this.vacation = data;
       } finally {
         this.loading = false;
+      }
+    },
+    async onClickChangeDiet() {
+      this.diet = "";
+      let form = new FormData();
+      form.append("pdf", this.pdf);
+      try {
+        await axios.post(`${process.env.VUE_APP_SERVER}api/diet`, form);
+      } finally {
+        this.diet = `${process.env.VUE_APP_SERVER}diet.png`;
       }
     },
     startTimer() {
