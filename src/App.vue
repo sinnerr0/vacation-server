@@ -91,7 +91,12 @@
             </v-list>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click="onClickChangeDiet" :disabled="!pdf">Change</v-btn>
+            <v-btn
+              @click="onClickChangeDiet"
+              :disabled="!pdf || !key"
+              style="margin-right:10px;"
+              >Change</v-btn
+            >
             <v-text-field v-model="key" label="Change Key Code"></v-text-field>
             <v-file-input
               v-model="pdf"
@@ -115,7 +120,7 @@ export default {
       vacation: { vacationTodayList: [], vacationWeekList: [] },
       diet: `${process.env.VUE_APP_SERVER}diet.png`,
       pdf: null,
-      key: '',
+      key: "",
       timerObj: null,
     };
   },
