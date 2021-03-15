@@ -84,7 +84,7 @@
               <v-list-item-group color="primary">
                 <v-list-item>
                   <v-list-item-content>
-                    <img :src="diet" />
+                    <img :src="diet" width="100%" alt="diet"/>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
