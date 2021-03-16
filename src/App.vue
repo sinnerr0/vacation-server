@@ -135,12 +135,12 @@ export default {
         let year = dateFns.format(date, 'yyyy')
         let month = dateFns.format(date, 'MM')
         const today = parseInt(dateFns.format(date, 'dd'))
-        let salaryDay = await this.getSalaryday(year, month)
+        let salaryDay = await this.getSalaryday()
         if (salaryDay < today) {
           date = dateFns.add(date, { months: 1 })
           year = dateFns.format(date, 'yyyy')
           month = dateFns.format(date, 'MM')
-          salaryDay = await this.getSalaryday(year, month)
+          salaryDay = await this.getSalaryday(true)
           date.setDate(salaryDay)
           this.salaryDday = dateFns.differenceInCalendarDays(new Date(), date)
         } else if (salaryDay > today) {
@@ -152,11 +152,12 @@ export default {
         // nothing
       }
     },
-    async getHolidaysMap(year, month) {
+    async getHolidaysMap(isNextMonth = false) {
       let holidayDaysMap = new Map()
       try {
         // https://data.go.kr/ expired date = 2023-03-16
-        const { data } = await axios.get(`http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?_type=json&serviceKey=8J55wvyP%2B3YGd4DrkAR%2BjxDCTOqInIIRS%2FVKffKJpYaA%2BcHlDf4Ksz0yqiJ%2Fp1EgS78qdYgotsPA7U6gCd1%2F9w%3D%3D&solYear=${year}&solMonth=${month}`)
+        const url = isNextMonth ? `${process.env.VUE_APP_SERVER}holidayNextMonth.json` : `${process.env.VUE_APP_SERVER}holidayThisMonth.json`
+        let { data } = await axios.get(url)
         if (data.response && data.response.header && data.response.header.resultCode === '00') {
           const totalCount = data.response.body.totalCount
           const items = data.response.body.items.item
@@ -182,8 +183,8 @@ export default {
       }
       return holidayDaysMap
     },
-    async getSalaryday(year, month) {
-      const holidayDaysMap = await this.getHolidaysMap(year, month)
+    async getSalaryday(isNextMonth = false) {
+      const holidayDaysMap = await this.getHolidaysMap(isNextMonth)
       let salaryDay = 21
       let date = new Date()
       date.setDate(salaryDay)
