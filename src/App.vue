@@ -84,7 +84,7 @@
               <v-list-item-group color="primary">
                 <v-list-item>
                   <v-list-item-content>
-                    <img :src="diet" width="100%" alt="diet"/>
+                    <img :src="diet" width="100%" alt="diet" />
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -118,7 +118,7 @@ export default {
     return {
       loading: false,
       vacation: { vacationTodayList: [], vacationWeekList: [] },
-      diet: `${process.env.VUE_APP_SERVER}diet.png`,
+      diet: "",
       pdf: null,
       key: "",
       timerObj: null,
@@ -134,6 +134,7 @@ export default {
   methods: {
     async getVacation() {
       this.loading = true;
+      this.diet = "";
       try {
         const { data } = await axios.get(
           `${process.env.VUE_APP_SERVER}vacation.json`
@@ -147,6 +148,9 @@ export default {
           ].member.filter((member) => !!member.name);
         }
         this.vacation = data;
+        this.diet = `${
+          process.env.VUE_APP_SERVER
+        }diet.png?nocache=${Date.now()}`;
       } finally {
         this.loading = false;
       }
@@ -159,7 +163,9 @@ export default {
       try {
         await axios.post(`${process.env.VUE_APP_SERVER}api/diet`, form);
       } finally {
-        this.diet = `${process.env.VUE_APP_SERVER}diet.png?nocache=${Date.now()}`;
+        this.diet = `${
+          process.env.VUE_APP_SERVER
+        }diet.png?nocache=${Date.now()}`;
       }
     },
     startTimer() {
