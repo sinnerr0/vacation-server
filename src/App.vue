@@ -132,14 +132,10 @@ export default {
       try {
         this.salaryDday = null
         let date = new Date()
-        let year = dateFns.format(date, 'yyyy')
-        let month = dateFns.format(date, 'MM')
         const today = parseInt(dateFns.format(date, 'dd'))
         let salaryDay = await this.getSalaryday()
         if (salaryDay < today) {
           date = dateFns.add(date, { months: 1 })
-          year = dateFns.format(date, 'yyyy')
-          month = dateFns.format(date, 'MM')
           salaryDay = await this.getSalaryday(true)
           date.setDate(salaryDay)
           this.salaryDday = dateFns.differenceInCalendarDays(new Date(), date)
