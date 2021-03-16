@@ -199,10 +199,10 @@ export default {
         } else if (dateFns.isSaturday(date)) {
           date.setDate(salaryDay - 1)
         }
+        salaryDay = date.getDate()
         if (holidayDaysMap.has(date.getDate())) {
           date.setDate(salaryDay - 1)
         } else {
-          salaryDay = date.getDate()
           searching = false
         }
       }
