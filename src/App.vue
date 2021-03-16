@@ -8,7 +8,12 @@
 
     <v-main>
       <v-container fluid>
-        <v-card :loading="loading">
+        <v-card v-if="salaryDday !== null">
+          <v-card-title v-if="salaryDday === 0">Salary Today<v-icon>mdi-currency-usd</v-icon></v-card-title>
+          <v-card-title v-else>Salary D{{ salaryDday }}</v-card-title>
+        </v-card>
+
+        <v-card :loading="loading" style="margin-top:10px;">
           <v-card-title>Today</v-card-title>
           <v-card-text>
             <v-list disabled>
@@ -140,7 +145,7 @@ export default {
           date.setDate(salaryDay)
           this.salaryDday = dateFns.differenceInCalendarDays(new Date(), date)
         } else if (salaryDay > today) {
-          this.salaryDday = salaryDay - today
+          this.salaryDday = today - salaryDay
         } else {
           this.salaryDday = 0
         }
@@ -183,6 +188,9 @@ export default {
       const holidayDaysMap = await this.getHolidaysMap(isNextMonth)
       let salaryDay = 21
       let date = new Date()
+      if (isNextMonth) {
+        date = dateFns.add(date, { months: 1 })
+      }
       date.setDate(salaryDay)
       let searching = true
       while (searching) {
