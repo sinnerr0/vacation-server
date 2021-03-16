@@ -18,6 +18,7 @@ async function main() {
   date = dateFns.add(date, { months: 1 })
   year = dateFns.format(date, 'yyyy')
   month = dateFns.format(date, 'MM')
+  data = await getHoliday(year, month)
   fs.writeFileSync(__dirname + '/holidayNextMonth.json', JSON.stringify(data))
 }
 
