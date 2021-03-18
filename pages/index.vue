@@ -13,7 +13,7 @@
           <v-card-title v-else>Salary D{{ salaryDday }}</v-card-title>
         </v-card>
 
-        <v-card :loading="loading" style="margin-top:10px;">
+        <v-card :loading="loading" style="margin-top:20px;">
           <v-card-title>Today</v-card-title>
           <v-card-text>
             <v-list disabled>
@@ -40,7 +40,7 @@
           </v-card-text>
         </v-card>
 
-        <v-card style="margin-top: 10px">
+        <v-card style="margin-top: 20px">
           <v-card-title>Weekly</v-card-title>
           <v-card-text>
             <v-list disabled>
@@ -58,7 +58,7 @@
           </v-card-text>
         </v-card>
 
-        <v-card style="margin-top: 10px">
+        <v-card style="margin-top: 20px">
           <v-card-title>Diet</v-card-title>
           <v-card-text>
             <v-list disabled>
@@ -78,7 +78,7 @@
           </v-card-actions>
         </v-card>
 
-        <v-card style="margin-top: 10px">
+        <v-card style="margin-top: 20px">
           <v-card-title>Background</v-card-title>
           <v-card-actions>
             <v-btn @click="onClickChangeBackground" :disabled="!backgroundImage || !backgroundKey" style="margin-right:10px;">Change</v-btn>
@@ -254,3 +254,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-card {
+  margin: 0px 30px;
+}
+</style>
