@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import * as dateFns from 'date-fns'
 
 export default {
@@ -111,13 +110,13 @@ export default {
       this.loading = true
       this.diet = ''
       try {
-        const { data } = await axios.get(`${process.env.VUE_APP_SERVER}vacation.json`)
+        const { data } = await this.$axios.get(`${process.env.NUXT_ENV_APP_SERVER}vacation.json`)
         data.vacationTodayList = data.vacationTodayList.filter((member) => !!member.member_name)
         for (let i = 0, j = data.vacationWeekList.length; i < j; i++) {
           data.vacationWeekList[i].member = data.vacationWeekList[i].member.filter((member) => !!member.name)
         }
         this.vacation = data
-        this.diet = `${process.env.VUE_APP_SERVER}diet.png?nocache=${Date.now()}`
+        this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
       } finally {
         this.loading = false
       }
@@ -128,9 +127,9 @@ export default {
       form.append('pdf', this.pdf)
       form.append('key', this.key)
       try {
-        await axios.post(`${process.env.VUE_APP_SERVER}api/diet`, form)
+        await this.$axios.post(`${process.env.NUXT_ENV_APP_SERVER}api/diet`, form)
       } finally {
-        this.diet = `${process.env.VUE_APP_SERVER}diet.png?nocache=${Date.now()}`
+        this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
       }
     },
     async getSalaryDday() {
@@ -157,8 +156,8 @@ export default {
       let holidayDaysMap = new Map()
       try {
         // https://data.go.kr/ expired date = 2023-03-16
-        const url = isNextMonth ? `${process.env.VUE_APP_SERVER}holidayNextMonth.json` : `${process.env.VUE_APP_SERVER}holidayThisMonth.json`
-        let { data } = await axios.get(url)
+        const url = isNextMonth ? `${process.env.NUXT_ENV_APP_SERVER}holidayNextMonth.json` : `${process.env.NUXT_ENV_APP_SERVER}holidayThisMonth.json`
+        let { data } = await this.$axios.get(url)
         if (data.response && data.response.header && data.response.header.resultCode === '00') {
           const totalCount = data.response.body.totalCount
           const items = data.response.body.items.item
