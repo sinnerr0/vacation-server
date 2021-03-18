@@ -1,89 +1,107 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const express = require('express')
+const app = express()
+const cors = require('cors')
+if (process.env.NODE_ENV === 'development') {
+  app.use(require('serve-static')('uploads'))
+}
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 //////////////
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit')
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use(limiter); //  apply to all requests
+})
+app.use(limiter) //  apply to all requests
 ///////////////
-let helmet = require("helmet");
-app.use(helmet());
-app.disable("x-powered-by");
+let helmet = require('helmet')
+app.use(helmet())
+app.disable('x-powered-by')
 ////////////////
-let compression = require("compression");
-app.use(compression());
+let compression = require('compression')
+app.use(compression())
 ////////////////
-let multer = require("multer");
-let upload = multer({ dest: "uploads/" });
+let multer = require('multer')
+let upload = multer({ dest: 'uploads/' })
 //////////////////
-const port = 3000;
+const port = 3001
 
-var fs = require("fs");
-var path = require("path");
-var PDFImage = require("pdf-image").PDFImage;
+var fs = require('fs')
+var path = require('path')
+var PDFImage = require('pdf-image').PDFImage
 
-app.post("/api/diet", upload.single("pdf"), (req, res) => {
-  if (
-    req.body &&
-    req.body.key === "ks.choi@alcherainc.com" &&
-    req.file &&
-    req.file.mimetype === "application/pdf"
-  ) {
-    var filePath = req.file.path;
-    var pdfImage = new PDFImage(filePath);
+app.post('/api/diet', upload.single('pdf'), (req, res) => {
+  if (req.body && req.body.key === 'ks.choi@alcherainc.com' && req.file && req.file.mimetype === 'application/pdf') {
+    var filePath = req.file.path
+    var pdfImage = new PDFImage(filePath)
     pdfImage.convertPage(0).then(
       function(imagePath) {
-        fs.unlink(filePath, (err) => {
+        fs.unlink(filePath, err => {
           if (err) {
-            res.status(500).send(err.message);
-            return;
+            res.status(500).send(err.message)
+            return
           }
-          var pngPath = __dirname + path.sep + imagePath;
-          var destPath = "/home/ubuntu/www/diet.png";
-          fs.rename(pngPath, destPath, (err) => {
+          var pngPath = __dirname + path.sep + imagePath
+          var destPath
+          if (process.env.NODE_ENV === 'development') {
+            destPath = 'uploads/diet.png'
+          } else {
+            destPath = '/home/ubuntu/www/diet.png'
+          }
+          fs.rename(pngPath, destPath, err => {
             if (err) {
-              fs.rename(pngPath, "uploads/diet.png", (err) => {
-                if (err) {
-                  res.status(500).send(err.message);
-                  return;
-                } else {
-                  res.sendStatus(500);
-                }
-              });
-              return;
+              res.status(500).send(err.message)
+              return
             } else {
-              res.sendStatus(201);
+              res.sendStatus(201)
             }
-          });
-        });
+          })
+        })
       },
       function(err) {
-        res.status(500).send(err.message);
-        return;
+        res.status(500).send(err.message)
+        return
       }
-    );
+    )
   } else {
-    res.sendStatus(400);
+    res.sendStatus(400)
   }
-});
+})
+
+app.post('/api/background', upload.single('image'), (req, res) => {
+  if (req.body && req.body.key === 'ks.choi@alcherainc.com' && req.file) {
+    var filePath = req.file.path
+    var destPath
+    if (process.env.NODE_ENV === 'development') {
+      destPath = 'uploads/background'
+    } else {
+      destPath = '/home/ubuntu/www/background'
+    }
+    fs.rename(filePath, destPath, err => {
+      if (err) {
+        res.status(500).send(err.message)
+        return
+      } else {
+        res.sendStatus(201)
+      }
+    })
+  } else {
+    res.sendStatus(400)
+  }
+})
 
 /////////////////
-let createError = require("http-errors");
+let createError = require('http-errors')
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
-});
+  next(createError(404))
+})
 // error handler
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500).send(err.message);
-});
+  res.status(err.status || 500).send(err.message)
+})
 
 app.listen(port, () => {
-  console.log(`app listening at port ${port}`);
-});
+  console.log(`app listening at port ${port}`)
+})

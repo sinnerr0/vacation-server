@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="appStyle">
     <v-app-bar app color="white" dark>
       <div class="d-flex align-center">
         <h1 class="text-h4 black--text">Alchera Dashboard</h1>
@@ -77,6 +77,15 @@
             <v-file-input v-model="pdf" accept="application/pdf" label="PDF File Input" truncate-length="100"></v-file-input>
           </v-card-actions>
         </v-card>
+
+        <v-card style="margin-top: 10px">
+          <v-card-title>Background</v-card-title>
+          <v-card-actions>
+            <v-btn @click="onClickChangeBackground" :disabled="!backgroundImage || !backgroundKey" style="margin-right:10px;">Change</v-btn>
+            <v-text-field v-model="backgroundKey" label="Change Key Code"></v-text-field>
+            <v-file-input v-model="backgroundImage" label="Image File Input" truncate-length="100"></v-file-input>
+          </v-card-actions>
+        </v-card>
       </v-container>
     </v-main>
   </v-app>
@@ -94,8 +103,20 @@ export default {
       diet: '',
       pdf: null,
       key: '',
+      background: `${process.env.NUXT_ENV_APP_SERVER}background`,
+      backgroundImage: null,
+      backgroundKey: '',
       timerObj: null,
     }
+  },
+  computed: {
+    appStyle() {
+      let style = ''
+      if (this.background) {
+        style += `background: url(${this.background});`
+      }
+      return style
+    },
   },
   async created() {
     await this.getSalaryDday()
@@ -111,12 +132,13 @@ export default {
       this.diet = ''
       try {
         const { data } = await this.$axios.get(`${process.env.NUXT_ENV_APP_SERVER}vacation.json`)
-        data.vacationTodayList = data.vacationTodayList.filter((member) => !!member.member_name)
+        data.vacationTodayList = data.vacationTodayList.filter(member => !!member.member_name)
         for (let i = 0, j = data.vacationWeekList.length; i < j; i++) {
-          data.vacationWeekList[i].member = data.vacationWeekList[i].member.filter((member) => !!member.name)
+          data.vacationWeekList[i].member = data.vacationWeekList[i].member.filter(member => !!member.name)
         }
         this.vacation = data
         this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
+        this.background = `${process.env.NUXT_ENV_APP_SERVER}background?nocache=${Date.now()}`
       } finally {
         this.loading = false
       }
@@ -128,8 +150,21 @@ export default {
       form.append('key', this.key)
       try {
         await this.$axios.post(`${process.env.NUXT_ENV_APP_SERVER}api/diet`, form)
-      } finally {
         this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
+      } catch (e) {
+        // nothing
+      }
+    },
+    async onClickChangeBackground() {
+      this.background = ''
+      let form = new FormData()
+      form.append('image', this.backgroundImage)
+      form.append('key', this.backgroundKey)
+      try {
+        await this.$axios.post(`${process.env.NUXT_ENV_APP_SERVER}api/background`, form)
+        this.background = `${process.env.NUXT_ENV_APP_SERVER}background?nocache=${Date.now()}`
+      } catch (e) {
+        // nothing
       }
     },
     async getSalaryDday() {
@@ -156,7 +191,9 @@ export default {
       let holidayDaysMap = new Map()
       try {
         // https://data.go.kr/ expired date = 2023-03-16
-        const url = isNextMonth ? `${process.env.NUXT_ENV_APP_SERVER}holidayNextMonth.json` : `${process.env.NUXT_ENV_APP_SERVER}holidayThisMonth.json`
+        const url = isNextMonth
+          ? `${process.env.NUXT_ENV_APP_SERVER}holidayNextMonth.json`
+          : `${process.env.NUXT_ENV_APP_SERVER}holidayThisMonth.json`
         let { data } = await this.$axios.get(url)
         if (data.response && data.response.header && data.response.header.resultCode === '00') {
           const totalCount = data.response.body.totalCount
@@ -173,7 +210,7 @@ export default {
             } else if (items.isHoliday) {
               holiday.push(items)
             }
-            holiday.forEach((day) => {
+            holiday.forEach(day => {
               holidayDaysMap.set(parseInt(('' + day.locdate).substr(-2)), day.locdate)
             })
           }
