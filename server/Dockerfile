@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 3001
 
-CMD ["pm2", "start", "index.js"]
+CMD pm2 start index.js && pm2 logs
