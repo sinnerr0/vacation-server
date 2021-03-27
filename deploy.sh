@@ -10,3 +10,5 @@ docker build -t vacation-cron \
   --build-arg SERVICE_KEY=$SERVICE_KEY \
   ./cron
 docker run --name vacation-cron --rm -d -v /home/ubuntu/www:/app/www vacation-cron
+
+echo "finished"
