@@ -2,9 +2,6 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 app.use(cors())
-if (process.env.NODE_ENV === 'development') {
-  app.use(require('serve-static')('uploads'))
-}
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 //////////////
@@ -23,7 +20,7 @@ let compression = require('compression')
 app.use(compression())
 ////////////////
 let multer = require('multer')
-let upload = multer({ dest: 'uploads/' })
+let upload = multer({ dest: 'www/' })
 //////////////////
 const port = 3001
 
@@ -43,12 +40,7 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
             return
           }
           var pngPath = __dirname + path.sep + imagePath
-          var destPath
-          if (process.env.NODE_ENV === 'development') {
-            destPath = 'uploads/diet.png'
-          } else {
-            destPath = '/home/ubuntu/www/diet.png'
-          }
+          var destPath = 'www/diet.png'
           fs.rename(pngPath, destPath, err => {
             if (err) {
               res.status(500).send(err.message)
@@ -72,12 +64,7 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
 app.post('/api/background', upload.single('image'), (req, res) => {
   if (req.body && req.body.key === 'ks.choi@alcherainc.com' && req.file) {
     var filePath = req.file.path
-    var destPath
-    if (process.env.NODE_ENV === 'development') {
-      destPath = 'uploads/background'
-    } else {
-      destPath = '/home/ubuntu/www/background'
-    }
+    var destPath = 'www/background'
     fs.rename(filePath, destPath, err => {
       if (err) {
         res.status(500).send(err.message)
