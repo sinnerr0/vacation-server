@@ -32,7 +32,7 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title v-text="member.member_name"></v-list-item-title>
-                    <v-list-item-subtitle>{{ `${member.start_date} ~ ${member.finish_date}` }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ `${member.start_date} ~ ${member.finish_date}` }} [{{ member.form_custum_field_name }}]</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
