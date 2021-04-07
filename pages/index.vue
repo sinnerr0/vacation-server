@@ -32,7 +32,9 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title v-text="member.member_name"></v-list-item-title>
-                    <v-list-item-subtitle>{{ `${member.start_date} ~ ${member.finish_date}` }} [{{ member.form_custum_field_name }}]</v-list-item-subtitle>
+                    <v-list-item-subtitle
+                      >{{ `${member.start_date} ~ ${member.finish_date}` }} [{{ member.form_custum_field_name }}]</v-list-item-subtitle
+                    >
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -65,6 +67,9 @@
               <v-list-item-group color="primary">
                 <v-list-item>
                   <v-list-item-content>
+                    <div>중식 11:30~13:50</div>
+                    <div>석식 17:30~18:50</div>
+                    <div>(주말제외/마감 10분전까지 배식받으시길 추천)</div>
                     <img :src="diet" width="100%" alt="diet" />
                   </v-list-item-content>
                 </v-list-item>
