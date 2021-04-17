@@ -15,7 +15,8 @@
     "core-js": "^3.8.3",
     "cross-env": "^7.0.3",
     "date-fns": "^2.19.0",
-    "nuxt": "^2.14.12"
+    "nuxt": "^2.14.12",
+    "vue-zoom-on-hover": "^1.0.5"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.12",

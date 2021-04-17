@@ -63,18 +63,10 @@
         <v-card>
           <v-card-title>Diet</v-card-title>
           <v-card-text>
-            <v-list disabled>
-              <v-list-item-group color="primary">
-                <v-list-item>
-                  <v-list-item-content>
-                    <div>중식 11:30~13:50</div>
-                    <div>석식 17:30~18:50</div>
-                    <div>(주말제외/마감 10분전까지 배식받으시길 추천)</div>
-                    <img :src="diet" width="100%" alt="diet" />
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
+            <div>중식 11:30~13:50</div>
+            <div>석식 17:30~18:50</div>
+            <div>(주말제외/마감 10분전까지 배식받으시길 추천)</div>
+            <zoom-on-hover :img-normal="diet" scale="2"></zoom-on-hover>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="onClickChangeDiet" :disabled="!pdf || !key" style="margin-right:10px;">Change</v-btn>
@@ -97,7 +89,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import * as dateFns from 'date-fns'
+import ZoomOnHover from 'vue-zoom-on-hover'
+
+Vue.use(ZoomOnHover)
 
 export default {
   data() {
