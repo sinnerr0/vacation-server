@@ -66,7 +66,7 @@
             <div>중식 11:30~13:50</div>
             <div>석식 17:30~18:50</div>
             <div>(주말제외/마감 10분전까지 배식받으시길 추천)</div>
-            <zoom-on-hover :img-normal="diet" scale="2"></zoom-on-hover>
+            <zoom-on-hover ref="zoom" :img-normal="diet" scale="1.5"></zoom-on-hover>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="onClickChangeDiet" :disabled="!pdf || !key" style="margin-right:10px;">Change</v-btn>
@@ -123,6 +123,13 @@ export default {
     await this.getSalaryDday()
     await this.getVacation()
     this.startTimer()
+  },
+  mounted() {
+    this.$refs &&
+      this.$refs.zoom &&
+      this.$refs.zoom.$el.addEventListener('touchstart', e => {
+        e.preventDefault()
+      })
   },
   destroyed() {
     clearInterval(this.timerObj)
