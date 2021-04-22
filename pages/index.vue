@@ -4,6 +4,8 @@
       <div class="d-flex align-center">
         <h1 class="text-h4 black--text">Alchera Dashboard</h1>
       </div>
+      <v-spacer></v-spacer>
+      <ActionButton :callback="onActionButton"></ActionButton>
     </v-app-bar>
 
     <v-main>
@@ -68,21 +70,9 @@
             <div>(주말제외/마감 10분전까지 배식받으시길 추천)</div>
             <zoom-on-hover ref="zoom" :img-normal="diet" scale="1.5"></zoom-on-hover>
           </v-card-text>
-          <v-card-actions>
-            <v-btn @click="onClickChangeDiet" :disabled="!pdf || !key" style="margin-right:10px;">Change</v-btn>
-            <v-text-field v-model="key" label="Change Key Code"></v-text-field>
-            <v-file-input v-model="pdf" accept="application/pdf" label="PDF File Input" truncate-length="100"></v-file-input>
-          </v-card-actions>
         </v-card>
-
-        <v-card>
-          <v-card-title>Background</v-card-title>
-          <v-card-actions>
-            <v-btn @click="onClickChangeBackground" :disabled="!backgroundImage || !backgroundKey" style="margin-right:10px;">Change</v-btn>
-            <v-text-field v-model="backgroundKey" label="Change Key Code"></v-text-field>
-            <v-file-input v-model="backgroundImage" label="Image File Input" truncate-length="100"></v-file-input>
-          </v-card-actions>
-        </v-card>
+        <DialogSettingDiet v-model="dialogDiet" :callback="onDiet"></DialogSettingDiet>
+        <DialogSettingBackground v-model="dialogBackground" :callback="onBackground"></DialogSettingBackground>
       </v-container>
     </v-main>
   </v-app>
@@ -102,11 +92,9 @@ export default {
       salaryDday: null,
       vacation: { vacationTodayList: [], vacationWeekList: [] },
       diet: '',
-      pdf: null,
-      key: '',
+      dialogDiet: false,
       background: `${process.env.NUXT_ENV_APP_SERVER}background`,
-      backgroundImage: null,
-      backgroundKey: '',
+      dialogBackground: false,
       timerObj: null,
     }
   },
@@ -137,7 +125,6 @@ export default {
   methods: {
     async getVacation() {
       this.loading = true
-      this.diet = ''
       try {
         const { data } = await this.$axios.get(`${process.env.NUXT_ENV_APP_SERVER}vacation.json`)
         data.vacationTodayList = data.vacationTodayList.filter(member => !!member.member_name)
@@ -145,34 +132,32 @@ export default {
           data.vacationWeekList[i].member = data.vacationWeekList[i].member.filter(member => !!member.name)
         }
         this.vacation = data
-        this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
-        this.background = `${process.env.NUXT_ENV_APP_SERVER}background?nocache=${Date.now()}`
       } finally {
+        this.onDiet(true)
+        this.onBackground(true)
         this.loading = false
       }
     },
-    async onClickChangeDiet() {
-      this.diet = ''
-      let form = new FormData()
-      form.append('pdf', this.pdf)
-      form.append('key', this.key)
-      try {
-        await this.$axios.post(`${process.env.NUXT_ENV_APP_SERVER}api/diet`, form)
-        this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
-      } catch (e) {
-        // nothing
+    onActionButton(action) {
+      switch (action) {
+        case 'notification':
+          break
+        case 'diet':
+          this.dialogDiet = true
+          break
+        case 'background':
+          this.dialogBackground = true
+          break
       }
     },
-    async onClickChangeBackground() {
-      this.background = ''
-      let form = new FormData()
-      form.append('image', this.backgroundImage)
-      form.append('key', this.backgroundKey)
-      try {
-        await this.$axios.post(`${process.env.NUXT_ENV_APP_SERVER}api/background`, form)
+    onDiet(result) {
+      if (result) {
+        this.diet = `${process.env.NUXT_ENV_APP_SERVER}diet.png?nocache=${Date.now()}`
+      }
+    },
+    onBackground(result) {
+      if (result) {
         this.background = `${process.env.NUXT_ENV_APP_SERVER}background?nocache=${Date.now()}`
-      } catch (e) {
-        // nothing
       }
     },
     async getSalaryDday() {
