@@ -6,8 +6,10 @@
       </div>
       <v-spacer></v-spacer>
       <ActionButton :callback="onActionButton"></ActionButton>
+      <v-snackbar :timeout="-1" :value="!!notification" max-width="500" elevation="24" absolute shaped top :multi-line="true">
+        {{ notification }}
+      </v-snackbar>
     </v-app-bar>
-
     <v-main>
       <v-container fluid>
         <v-card v-if="salaryDday !== null">
@@ -71,6 +73,7 @@
             <zoom-on-hover ref="zoom" :img-normal="diet" scale="1.5"></zoom-on-hover>
           </v-card-text>
         </v-card>
+        <DialogSettingNotification v-model="dialogNotification" :notification="notification" :callback="onNotification"></DialogSettingNotification>
         <DialogSettingDiet v-model="dialogDiet" :callback="onDiet"></DialogSettingDiet>
         <DialogSettingBackground v-model="dialogBackground" :callback="onBackground"></DialogSettingBackground>
       </v-container>
@@ -89,6 +92,8 @@ export default {
   data() {
     return {
       loading: false,
+      notification: '',
+      dialogNotification: false,
       salaryDday: null,
       vacation: { vacationTodayList: [], vacationWeekList: [] },
       diet: '',
@@ -96,6 +101,7 @@ export default {
       background: `${process.env.NUXT_ENV_APP_SERVER}background`,
       dialogBackground: false,
       timerObj: null,
+      timerObjNoti: null,
     }
   },
   computed: {
@@ -110,6 +116,7 @@ export default {
   async created() {
     await this.getSalaryDday()
     await this.getVacation()
+    await this.onNotification(true)
     this.startTimer()
   },
   mounted() {
@@ -121,6 +128,7 @@ export default {
   },
   destroyed() {
     clearInterval(this.timerObj)
+    clearInterval(this.timerObjNoti)
   },
   methods: {
     async getVacation() {
@@ -141,6 +149,7 @@ export default {
     onActionButton(action) {
       switch (action) {
         case 'notification':
+          this.dialogNotification = true
           break
         case 'diet':
           this.dialogDiet = true
@@ -148,6 +157,22 @@ export default {
         case 'background':
           this.dialogBackground = true
           break
+      }
+    },
+    async onNotification(result) {
+      if (result) {
+        const ONE_MINUTE = 60 * 1000
+        clearInterval(this.timerObjNoti)
+        const getNotification = async () => {
+          try {
+            const { data } = await this.$axios.get(`${process.env.NUXT_ENV_APP_SERVER}api/noti`)
+            this.notification = data
+          } catch (err) {
+            console.error(err)
+          }
+        }
+        getNotification()
+        this.timerObj = setInterval(getNotification, ONE_MINUTE)
       }
     },
     onDiet(result) {
@@ -239,6 +264,7 @@ export default {
     },
     startTimer() {
       const ONE_HOUR = 60 * 60 * 1000
+      clearInterval(this.timerObj)
       this.timerObj = setInterval(async () => {
         await this.getSalaryDday()
         await this.getVacation()

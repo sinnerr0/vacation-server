@@ -11,14 +11,14 @@
           </v-icon>
         </v-btn>
       </template>
-      <!-- <v-tooltip left>
+      <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" @click="onClickAction('notification')" fab dark small color="indigo">
             <v-icon>mdi-bulletin-board</v-icon>
           </v-btn>
         </template>
         <span>Notification</span>
-      </v-tooltip> -->
+      </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" @click="onClickAction('diet')" fab dark small color="green">
