@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="value" max-width="500" @click:outside="close">
       <v-card class="ma-0">
-        <v-card-title>Diet Setting</v-card-title>
+        <v-card-title>Notification Setting</v-card-title>
         <v-card-text>
           <v-text-field v-model="message" label="Notification"></v-text-field>
           <v-text-field v-model="key" label="Change Key Code"></v-text-field>
