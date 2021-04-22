@@ -172,7 +172,7 @@ export default {
           }
         }
         await getNotification()
-        this.timerObj = setInterval(getNotification, ONE_MINUTE)
+        this.timerObjNoti = setInterval(getNotification, ONE_MINUTE)
       }
     },
     onDiet(result) {
