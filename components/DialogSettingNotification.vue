@@ -10,7 +10,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn @click="close" text>Cancel</v-btn>
-          <v-btn @click="onClickChange" :disabled="!message" color="primary" text>Notify</v-btn>
+          <v-btn @click="onClickChange" color="primary" text>Notify</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

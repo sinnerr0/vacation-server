@@ -171,7 +171,7 @@ export default {
             console.error(err)
           }
         }
-        getNotification()
+        await getNotification()
         this.timerObj = setInterval(getNotification, ONE_MINUTE)
       }
     },
