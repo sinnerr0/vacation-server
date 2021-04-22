@@ -23,13 +23,18 @@ let multer = require('multer')
 let upload = multer({ dest: 'www/' })
 //////////////////
 const port = 3001
+const KEY = 'ks.choi@alcherainc.com'
 
 var fs = require('fs')
 var path = require('path')
 var PDFImage = require('pdf-image').PDFImage
 
+app.get('/api/health', (req, res) => {
+  res.sendStatus(200)
+})
+
 app.post('/api/diet', upload.single('pdf'), (req, res) => {
-  if (req.body && req.body.key === 'ks.choi@alcherainc.com' && req.file && req.file.mimetype === 'application/pdf') {
+  if (req.body && req.body.key === KEY && req.file && req.file.mimetype === 'application/pdf') {
     var filePath = req.file.path
     var pdfImage = new PDFImage(filePath)
     pdfImage.convertPage(0).then(
@@ -62,7 +67,7 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
 })
 
 app.post('/api/background', upload.single('image'), (req, res) => {
-  if (req.body && req.body.key === 'ks.choi@alcherainc.com' && req.file) {
+  if (req.body && req.body.key === KEY && req.file) {
     var filePath = req.file.path
     var destPath = 'www/background'
     fs.rename(filePath, destPath, err => {
@@ -73,6 +78,31 @@ app.post('/api/background', upload.single('image'), (req, res) => {
         res.sendStatus(201)
       }
     })
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+app.get('/api/noti', (req, res) => {
+  var filePath = 'noti.txt'
+  try {
+    let message = fs.readFileSync(filePath).toString()
+    res.send(message)
+  } catch (err) {
+    res.send('')
+  }
+})
+
+app.post('/api/noti', (req, res) => {
+  if (req.body && req.body.key === KEY) {
+    var filePath = 'noti.txt'
+    var message = req.body.message
+    try {
+      fs.writeFileSync(filePath, message)
+      res.sendStatus(201)
+    } catch (err) {
+      res.status(500).send(err.message)
+    }
   } else {
     res.sendStatus(400)
   }
