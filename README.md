@@ -1,21 +1,50 @@
 # alchera-dashboard
-[![Netlify Status](https://api.netlify.com/api/v1/badges/e0ec2a4c-6f56-47ee-9e9a-d705914e5fc5/deploy-status)](https://app.netlify.com/sites/alchera/deploys)
 
-## Build Setup
+![Heroku](https://heroku-badge.herokuapp.com/?app=heroku-badge)
+
+## Build & Launch
 
 ```bash
 # install dependencies
-$ npm install
+$ npm i
 
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
+# launch server
+$ npm start
 ```
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+## Deploy
+
+Download and install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
+If you haven't already, log in to your Heroku account and follow the prompts to create a new SSH public key.
+
+```
+$ heroku login
+```
+
+Log in to Container Registry
+You must have Docker set up locally to continue. You should see output when you run this command.
+
+```
+$ docker ps
+```
+
+Now you can sign into Container Registry.
+
+```
+$ heroku container:login
+```
+
+Push your Docker-based app
+Build the Dockerfile in the current directory and push the Docker image.
+
+```
+$ heroku container:push web
+```
+
+Deploy the changes
+Release the newly pushed images to deploy your app.
+
+```
+$ heroku container:release web
+```
