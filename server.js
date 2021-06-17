@@ -2,6 +2,12 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
+// heroku sleep protect
+const https = require('https')
+setInterval(function () {
+  https.get('https://alchera.herokuapp.com/api/health')
+}, 600000)
+
 app.use(cors())
 app.use(express.static('www'))
 app.use(express.json())
