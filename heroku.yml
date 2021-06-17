@@ -1,4 +1,0 @@
-build:
-  docker:
-    server: server/Dockerfile
-    cron: cron/Dockerfile

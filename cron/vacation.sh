@@ -1,2 +1,0 @@
-#!/bin/bash
-curl -v -X GET -H "Content-Type:application/json" -b "SESSION=${SESSION}" "https://www.docswave.com/v2/alchera/dashboard?company_seq=15701&member_seq=95287" | jq '.body | {vacationTodayList: .vacationTodayList, vacationWeekList: .vacationWeekList }' > /app/www/vacation.json

@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+
 app.use(cors())
+app.use(express.static('www'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 //////////////
@@ -22,7 +24,7 @@ app.use(compression())
 let multer = require('multer')
 let upload = multer({ dest: 'www/' })
 //////////////////
-const port = 3001
+const port = process.env.PORT || 3001
 const KEY = 'ks.choi@alcherainc.com'
 
 var fs = require('fs')
@@ -38,15 +40,15 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
     var filePath = req.file.path
     var pdfImage = new PDFImage(filePath)
     pdfImage.convertPage(0).then(
-      function(imagePath) {
-        fs.unlink(filePath, err => {
+      function (imagePath) {
+        fs.unlink(filePath, (err) => {
           if (err) {
             res.status(500).send(err.message)
             return
           }
           var pngPath = __dirname + path.sep + imagePath
           var destPath = 'www/diet.png'
-          fs.rename(pngPath, destPath, err => {
+          fs.rename(pngPath, destPath, (err) => {
             if (err) {
               res.status(500).send(err.message)
               return
@@ -56,7 +58,7 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
           })
         })
       },
-      function(err) {
+      function (err) {
         res.status(500).send(err.message)
         return
       }
@@ -70,7 +72,7 @@ app.post('/api/background', upload.single('image'), (req, res) => {
   if (req.body && req.body.key === KEY && req.file) {
     var filePath = req.file.path
     var destPath = 'www/background'
-    fs.rename(filePath, destPath, err => {
+    fs.rename(filePath, destPath, (err) => {
       if (err) {
         res.status(500).send(err.message)
         return
@@ -111,11 +113,11 @@ app.post('/api/noti', (req, res) => {
 /////////////////
 let createError = require('http-errors')
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404))
 })
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(err.status || 500).send(err.message)
 })
 
