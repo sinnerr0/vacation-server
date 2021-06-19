@@ -30,7 +30,7 @@ async function processHoliday() {
 
 var CronJob = require('cron').CronJob
 var job = new CronJob(
-  '0 0,30 * * * *',
+  '0 0 * * * *',
   async function () {
     exec('sh vacation.sh', (error, stdout, stderr) => {
       if (error) {
