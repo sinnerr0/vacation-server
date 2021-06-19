@@ -8,8 +8,8 @@ setInterval(function () {
   https.get('https://alchera.herokuapp.com/api/health')
 }, 600000)
 
-app.use(cors())
-app.use(express.static('www'))
+const corsOptions = { origin: 'https://alchera.netlify.app' }
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 //////////////
@@ -30,7 +30,7 @@ app.use(compression())
 let multer = require('multer')
 let upload = multer({ dest: 'www/' })
 //////////////////
-const port = process.env.PORT || 3001
+const port = 3001
 const KEY = 'ks.choi@alcherainc.com'
 
 var fs = require('fs')

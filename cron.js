@@ -31,13 +31,13 @@ async function processHoliday() {
 var CronJob = require('cron').CronJob
 var job = new CronJob(
   '0 0,30 * * * *',
-  function () {
+  async function () {
     exec('sh vacation.sh', (error, stdout, stderr) => {
       if (error) {
         console.log(`sh vacation.sh error: ${error}`)
       }
     })
-    processHoliday()
+    await processHoliday()
   },
   null,
   true,
