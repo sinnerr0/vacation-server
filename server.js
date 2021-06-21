@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const redisDB = require('./redis-db')
 
 // heroku sleep protect
 const https = require('https')
@@ -54,11 +55,12 @@ app.post('/api/diet', upload.single('pdf'), (req, res) => {
           }
           var pngPath = __dirname + path.sep + imagePath
           var destPath = 'www/diet.png'
-          fs.rename(pngPath, destPath, (err) => {
+          fs.rename(pngPath, destPath, async (err) => {
             if (err) {
               res.status(500).send(err.message)
               return
             } else {
+              await redisDB.saveData()
               res.sendStatus(201)
             }
           })
@@ -78,11 +80,12 @@ app.post('/api/background', upload.single('image'), (req, res) => {
   if (req.body && req.body.key === KEY && req.file) {
     var filePath = req.file.path
     var destPath = 'www/background'
-    fs.rename(filePath, destPath, (err) => {
+    fs.rename(filePath, destPath, async (err) => {
       if (err) {
         res.status(500).send(err.message)
         return
       } else {
+        await redisDB.saveData()
         res.sendStatus(201)
       }
     })
@@ -101,12 +104,13 @@ app.get('/api/noti', (req, res) => {
   }
 })
 
-app.post('/api/noti', (req, res) => {
+app.post('/api/noti', async (req, res) => {
   if (req.body && req.body.key === KEY) {
     var filePath = 'noti.txt'
     var message = req.body.message
     try {
       fs.writeFileSync(filePath, message)
+      await redisDB.saveData()
       res.sendStatus(201)
     } catch (err) {
       res.status(500).send(err.message)
@@ -127,6 +131,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500).send(err.message)
 })
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`app listening at port ${port}`)
+  await redisDB.loadData()
 })
