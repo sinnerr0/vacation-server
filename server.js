@@ -95,7 +95,7 @@ app.post('/api/background', upload.single('image'), (req, res) => {
 })
 
 app.get('/api/noti', (req, res) => {
-  var filePath = 'noti.txt'
+  var filePath = 'www/noti.txt'
   try {
     let message = fs.readFileSync(filePath).toString()
     res.send(message)
@@ -106,7 +106,7 @@ app.get('/api/noti', (req, res) => {
 
 app.post('/api/noti', async (req, res) => {
   if (req.body && req.body.key === KEY) {
-    var filePath = 'noti.txt'
+    var filePath = 'www/noti.txt'
     var message = req.body.message
     try {
       fs.writeFileSync(filePath, message)
