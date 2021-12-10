@@ -249,7 +249,7 @@ app.post("/api/shiftee", async (req, res) => {
           COOKIES
         );
       }
-      console.log("Success");
+      res.sendStatus(200);
     } catch (e) {
       res.status(400).send(e.toString());
       if (e.response && e.response.data) {
