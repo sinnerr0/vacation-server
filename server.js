@@ -218,7 +218,9 @@ app.post("/api/shiftee", async (req, res) => {
           v.shift_template_id === template.shift_template_id &&
           v.employee_id === employee_id
       );
-      shift_id = shift.shift_id;
+      if (shift) {
+        shift_id = shift.shift_id;
+      }
     }
     const attendance = responseBatch.data.attendances.find(
       (v) => v.employee_id === employee_id
