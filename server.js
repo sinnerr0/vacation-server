@@ -43,45 +43,6 @@ app.get("/api/health", (req, res) => {
   res.sendStatus(200);
 });
 
-app.post("/api/diet", upload.single("pdf"), (req, res) => {
-  if (
-    req.body &&
-    req.body.key === KEY &&
-    req.file &&
-    req.file.mimetype === "application/pdf"
-  ) {
-    var filePath = req.file.path;
-    var pdfImage = new PDFImage(filePath);
-    pdfImage.convertPage(0).then(
-      function (imagePath) {
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            res.status(500).send(err.message);
-            return;
-          }
-          var pngPath = __dirname + path.sep + imagePath;
-          var destPath = "www/diet.png";
-          fs.rename(pngPath, destPath, async (err) => {
-            if (err) {
-              res.status(500).send(err.message);
-              return;
-            } else {
-              await redisDB.saveData();
-              res.sendStatus(201);
-            }
-          });
-        });
-      },
-      function (err) {
-        res.status(500).send(err.message);
-        return;
-      }
-    );
-  } else {
-    res.sendStatus(400);
-  }
-});
-
 app.post("/api/background", upload.single("image"), (req, res) => {
   if (req.body && req.body.key === KEY && req.file) {
     var filePath = req.file.path;

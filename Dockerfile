@@ -1,6 +1,6 @@
 FROM node:15-alpine
 
-RUN apk update && apk add imagemagick ghostscript poppler-utils jq curl gettext nginx && mkdir -p /run/nginx
+RUN apk update && apk add imagemagick ghostscript poppler-utils jq curl gettext nginx chromium && mkdir -p /run/nginx
 
 RUN npm i -g pm2
 

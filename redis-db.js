@@ -13,7 +13,7 @@ redis.on('error', (err) => {
   console.error(err)
 })
 
-const dataKeys = ['background', 'diet.png', 'holidayNextMonth.json', 'holidayThisMonth.json', 'vacation.json', 'noti.txt']
+const dataKeys = ['background', 'holidayNextMonth.json', 'holidayThisMonth.json', 'noti.txt']
 
 async function saveData() {
   try {
