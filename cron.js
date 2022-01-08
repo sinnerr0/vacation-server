@@ -48,14 +48,14 @@ async function getDietImage() {
       ],
     });
     const page = await browser.newPage();
-    await page.setCookie({
-      name: "bizboxa",
-      value: process.env.SESSION,
-      url: "http://58.224.161.205/",
-      path: "/",
-      httpOnly: true,
-    });
     await page.goto("http://58.224.161.205/");
+    await page.waitForSelector("#userId");
+    await page.focus("#userId");
+    await page.keyboard.type(process.env.CHOI_USERNAME);
+    await page.focus("#userPw");
+    await page.keyboard.type(process.env.CHOI_PASSWORD);
+    await page.click(".log_btn");
+    await page.waitForSelector(".list_con");
     const noticeList = await page.$$(".list_con");
     let query, imageUrl;
     for (const notice of noticeList) {

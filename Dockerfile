@@ -1,6 +1,6 @@
 FROM node:15-alpine
 
-RUN apk update && apk add imagemagick ghostscript poppler-utils jq curl gettext nginx chromium && mkdir -p /run/nginx
+RUN apk update && apk add imagemagick ghostscript poppler-utils jq curl gettext nginx chromium bash && mkdir -p /run/nginx
 
 RUN npm i -g pm2
 
@@ -11,11 +11,13 @@ RUN npm ci --only=production
 COPY . .
 
 ARG PORT
-ARG SESSION
 ARG SERVICE_KEY
+ARG CHOI_USERNAME
+ARG CHOI_PASSWORD
 ENV PORT=$PORT
-ENV SESSION=$SESSION
 ENV SERVICE_KEY=$SERVICE_KEY
+ENV CHOI_USERNAME=$CHOI_USERNAME
+ENV CHOI_PASSWORD=$CHOI_PASSWORD
 ENV DOLLAR='$'
 
 COPY nginx.conf /etc/nginx/nginx.conf
