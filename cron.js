@@ -3,6 +3,7 @@ const puppeteer = require("puppeteer");
 const dateFns = require("date-fns");
 const fs = require("fs");
 const path = require("path");
+const redisDB = require("./redis-db");
 
 const directory = path.join(__dirname, "www");
 if (!fs.existsSync(directory)) {
@@ -86,6 +87,7 @@ async function getDietImage() {
         responseType: "stream",
       });
       data.pipe(fs.createWriteStream(path.join(directory, "diet.png")));
+      await redisDB.saveData();
     }
   } catch (error) {
     console.error(error);
