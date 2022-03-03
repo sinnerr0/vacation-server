@@ -91,6 +91,7 @@ app.post("/api/shiftee", async (req, res) => {
   if (req.body && req.body.cookie && req.body.type) {
     const isClockIn = req.body.type.toUpperCase() === "IN";
     const isClockOut = req.body.type.toUpperCase() === "OUT";
+    console.log("/api/shiftee type=", req.body.type.toUpperCase());
     if (!isClockIn && !isClockOut) {
       return res.status(400).send("Params wrong");
     }
@@ -106,6 +107,7 @@ app.post("/api/shiftee", async (req, res) => {
         .map((v) => v.trim())
         .map((v) => v.split("="));
     } catch (error) {
+      console.log("/api/shiftee cookie value wrong");
       return res.status(400).send("Params wrong");
     }
     let shiftee_account_auth_token = "";
@@ -118,6 +120,7 @@ app.post("/api/shiftee", async (req, res) => {
       }
     }
     if (!shiftee_account_auth_token || !shiftee_employee_auth_token) {
+      console.log("/api/shiftee shiftee_token empty");
       return res.status(400).send("Params wrong");
     }
     let employee_id = JSON.parse(
@@ -131,7 +134,7 @@ app.post("/api/shiftee", async (req, res) => {
         Cookie: `shiftee_account_auth_token=${shiftee_account_auth_token}; shiftee_employee_auth_token=${shiftee_employee_auth_token};`,
       },
     };
-
+    console.log("/api/shiftee employee_id=", employee_id);
     const responseAuth = await axios.get(
       `https://shiftee.io/api/company/employee/auth?employee_id=${employee_id}`,
       COOKIES
@@ -173,12 +176,14 @@ app.post("/api/shiftee", async (req, res) => {
     const template = responseBatch.data.shiftTemplates.find(
       (v) => v.name === "9to6"
     );
+    console.log("/api/shiftee template=", template);
     if (template) {
       const shift = responseBatch.data.shifts.find(
         (v) =>
           v.shift_template_id === template.shift_template_id &&
           v.employee_id === employee_id
       );
+      console.log("/api/shiftee template=", shift);
       if (shift) {
         shift_id = shift.shift_id;
       }
@@ -186,6 +191,7 @@ app.post("/api/shiftee", async (req, res) => {
     const attendance = responseBatch.data.attendances.find(
       (v) => v.employee_id === employee_id
     );
+    console.log("/api/shiftee template=", attendance);
     try {
       let responseClock;
       if (!attendance && isClockIn) {
