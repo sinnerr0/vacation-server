@@ -92,9 +92,9 @@ app.post("/api/shiftee", async (req, res) => {
     const isClockIn = req.body.type.toUpperCase() === "IN";
     const isClockOut = req.body.type.toUpperCase() === "OUT";
     if (!isClockIn && !isClockOut) {
-      res.status(400).send("Params wrong");
+      return res.status(400).send("Params wrong");
     }
-    let cookie
+    let cookie;
     try {
       cookie = req.body.cookie
         .split(";")
@@ -106,7 +106,7 @@ app.post("/api/shiftee", async (req, res) => {
         .map((v) => v.trim())
         .map((v) => v.split("="));
     } catch (error) {
-      res.status(400).send("Params wrong");
+      return res.status(400).send("Params wrong");
     }
     let shiftee_account_auth_token = "";
     let shiftee_employee_auth_token = "";
@@ -118,7 +118,7 @@ app.post("/api/shiftee", async (req, res) => {
       }
     }
     if (!shiftee_account_auth_token || !shiftee_employee_auth_token) {
-      res.status(400).send("Params wrong");
+      return res.status(400).send("Params wrong");
     }
     let employee_id = JSON.parse(
       Buffer.from(
@@ -214,18 +214,18 @@ app.post("/api/shiftee", async (req, res) => {
       }
       res.sendStatus(200);
     } catch (e) {
-      res.status(400).send(e.toString());
       if (e.response && e.response.data) {
-        res.sendStatus(400);
         console.error(e.response.data);
+        return res.sendStatus(400);
       } else if (e.response) {
         console.error(e.response);
       } else {
         console.error(e);
       }
+      return res.status(400).send(e.toString());
     }
   } else {
-    res.sendStatus(400);
+    return res.sendStatus(400);
   }
 });
 
