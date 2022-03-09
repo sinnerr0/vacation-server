@@ -172,26 +172,29 @@ app.post("/api/shiftee", async (req, res) => {
       },
       COOKIES
     );
-    let shift_id;
-    const template = responseBatch.data.shiftTemplates.find(
-      (v) => v.name === "9to6"
-    );
-    console.log("/api/shiftee template=", template);
-    if (template) {
-      const shift = responseBatch.data.shifts.find(
-        (v) =>
-          v.shift_template_id === template.shift_template_id &&
-          v.employee_id === employee_id
+    const today = new Date();
+    const shift = data.shifts
+      .filter((v) => v.employee_id === employee_id)
+      .filter(
+        (v) => new Date(v.start_time).toDateString() === today.toDateString()
+      )[0];
+    console.log("/api/shiftee today=", today.toDateString());
+    console.log("/api/shiftee employee=", responseAuth.data.employee);
+    console.log("/api/shiftee shift=", shift);
+    let template, shift_id;
+    if (shift) {
+      shift_id = shift.shift_id;
+      template = responseBatch.data.shiftTemplates.find(
+        (v) => v.shift_template_id === shift.shift_template_id
       );
-      console.log("/api/shiftee template=", shift);
-      if (shift) {
-        shift_id = shift.shift_id;
-      }
     }
-    const attendance = responseBatch.data.attendances.find(
-      (v) => v.employee_id === employee_id
-    );
-    console.log("/api/shiftee template=", attendance);
+    console.log("/api/shiftee template=", template);
+    const attendance = data.attendances
+      .filter((v) => v.employee_id === employee_id)
+      .filter(
+        (v) => new Date(v.clock_in_time).toDateString() === today.toDateString()
+      )[0];
+    console.log("/api/shiftee attendance=", attendance);
     try {
       let responseClock;
       if (!attendance && isClockIn) {
