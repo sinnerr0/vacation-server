@@ -173,7 +173,7 @@ app.post("/api/shiftee", async (req, res) => {
       COOKIES
     );
     const today = new Date();
-    const shift = data.shifts
+    const shift = responseBatch.data.shifts
       .filter((v) => v.employee_id === employee_id)
       .filter(
         (v) => new Date(v.start_time).toDateString() === today.toDateString()
@@ -189,7 +189,7 @@ app.post("/api/shiftee", async (req, res) => {
       );
     }
     console.log("/api/shiftee template=", template);
-    const attendance = data.attendances
+    const attendance = responseBatch.data.attendances
       .filter((v) => v.employee_id === employee_id)
       .filter(
         (v) => new Date(v.clock_in_time).toDateString() === today.toDateString()
