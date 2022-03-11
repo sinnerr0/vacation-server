@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const redisDB = require("./redis-db");
+const moment = require("moment");
+require("moment-timezone");
 
 // heroku sleep protect
 const https = require("https");
@@ -172,13 +174,15 @@ app.post("/api/shiftee", async (req, res) => {
       },
       COOKIES
     );
-    const today = new Date();
+    const today = moment().tz("Asia/Seoul");
     const shift = responseBatch.data.shifts
       .filter((v) => v.employee_id === employee_id)
       .filter(
-        (v) => new Date(v.start_time).toDateString() === today.toDateString()
+        (v) =>
+          moment(v.start_time).tz("Asia/Seoul").format("YYYY-MM-DD") ===
+          today.format("YYYY-MM-DD")
       )[0];
-    console.log("/api/shiftee today=", today.toDateString());
+    console.log("/api/shiftee today=", today.format("YYYY-MM-DD"));
     console.log("/api/shiftee employee=", responseAuth.data.employee);
     console.log("/api/shiftee shift=", shift);
     let template, shift_id;
@@ -192,7 +196,9 @@ app.post("/api/shiftee", async (req, res) => {
     const attendance = responseBatch.data.attendances
       .filter((v) => v.employee_id === employee_id)
       .filter(
-        (v) => new Date(v.clock_in_time).toDateString() === today.toDateString()
+        (v) =>
+          moment(v.clock_in_time).tz("Asia/Seoul").format("YYYY-MM-DD") ===
+          today.format("YYYY-MM-DD")
       )[0];
     console.log("/api/shiftee attendance=", attendance);
     try {
@@ -239,19 +245,11 @@ app.post("/api/shiftee", async (req, res) => {
 });
 
 function getTodayStart() {
-  const today = new Date();
-  today.setHours(0);
-  today.setMinutes(0);
-  today.setSeconds(0, 0);
-  return today.toISOString();
+  return moment().tz("Asia/Seoul").startOf("day").utc().format();
 }
 
 function getTodayEnd() {
-  const today = new Date();
-  today.setHours(23);
-  today.setMinutes(59);
-  today.setSeconds(59, 0);
-  return today.toISOString();
+  return moment().tz("Asia/Seoul").endOf("day").utc().format();
 }
 
 /////////////////
@@ -269,3 +267,5 @@ app.listen(port, async () => {
   console.log(`app listening at port ${port}`);
   await redisDB.loadData();
 });
+
+console.log("range=", [getTodayStart(), getTodayEnd()]);
