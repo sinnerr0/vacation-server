@@ -1,9 +1,7 @@
 const axios = require("axios");
-const puppeteer = require("puppeteer");
 const dateFns = require("date-fns");
 const fs = require("fs");
 const path = require("path");
-const redisDB = require("./redis-db");
 
 const directory = path.join(__dirname, "www");
 if (!fs.existsSync(directory)) {
@@ -37,69 +35,11 @@ async function processHoliday() {
   );
 }
 
-async function getDietImage() {
-  try {
-    const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium-browser",
-      args: [
-        "--disable-gpu",
-        "--disable-setuid-sandbox",
-        "--no-sandbox",
-        "--no-zygote",
-      ],
-    });
-    const page = await browser.newPage();
-    await page.goto("http://58.224.161.205/");
-    await page.waitForSelector("#userId");
-    await page.focus("#userId");
-    await page.keyboard.type(process.env.CHOI_USERNAME);
-    await page.focus("#userPw");
-    await page.keyboard.type(process.env.CHOI_PASSWORD);
-    await page.click(".log_btn");
-    await page.waitForSelector(".list_con");
-    const noticeList = await page.$$(".list_con");
-    let query, imageUrl;
-    for (const notice of noticeList) {
-      const text = await page.evaluate((el) => el.textContent, notice);
-      if (text.includes("식단표")) {
-        const boardHint = await page.evaluate(
-          (el) => el.attributes.onclick.textContent,
-          notice
-        );
-        query = /boardNo=\d+&artNo=\d+/g.exec(boardHint)[0];
-        break;
-      }
-    }
-    console.log("notice query=", query);
-    if (query) {
-      await page.goto(
-        `http://58.224.161.205/edms/board/viewPostArtContent.do?${query}`
-      );
-      const image = await page.$("img");
-      imageUrl = await page.evaluate((el) => el.src, image);
-    }
-    await browser.close();
-    console.log("notice imageUrl=", imageUrl);
-    if (imageUrl) {
-      const { data } = await axios({
-        method: "get",
-        url: imageUrl,
-        responseType: "stream",
-      });
-      data.pipe(fs.createWriteStream(path.join(directory, "diet.png")));
-      await redisDB.saveData();
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 var CronJob = require("cron").CronJob;
 var job = new CronJob(
   "0 0 * * * *",
   async function () {
     await processHoliday();
-    await getDietImage();
   },
   null,
   true,

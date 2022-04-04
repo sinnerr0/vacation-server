@@ -30,63 +30,10 @@ app.disable("x-powered-by");
 ////////////////
 let compression = require("compression");
 app.use(compression());
-////////////////
-let multer = require("multer");
-let upload = multer({ dest: "www/" });
-//////////////////
 const port = 3001;
-const KEY = "ks.choi@alcherainc.com";
-
-var fs = require("fs");
-var path = require("path");
-var PDFImage = require("pdf-image").PDFImage;
 
 app.get("/api/health", (req, res) => {
   res.sendStatus(200);
-});
-
-app.post("/api/background", upload.single("image"), (req, res) => {
-  if (req.body && req.body.key === KEY && req.file) {
-    var filePath = req.file.path;
-    var destPath = "www/background";
-    fs.rename(filePath, destPath, async (err) => {
-      if (err) {
-        res.status(500).send(err.message);
-        return;
-      } else {
-        await redisDB.saveData();
-        res.sendStatus(201);
-      }
-    });
-  } else {
-    res.sendStatus(400);
-  }
-});
-
-app.get("/api/noti", (req, res) => {
-  var filePath = "www/noti.txt";
-  try {
-    let message = fs.readFileSync(filePath).toString();
-    res.send(message);
-  } catch (err) {
-    res.send("");
-  }
-});
-
-app.post("/api/noti", async (req, res) => {
-  if (req.body && req.body.key === KEY) {
-    var filePath = "www/noti.txt";
-    var message = req.body.message;
-    try {
-      fs.writeFileSync(filePath, message);
-      await redisDB.saveData();
-      res.sendStatus(201);
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  } else {
-    res.sendStatus(400);
-  }
 });
 
 app.post("/api/shiftee", async (req, res) => {
