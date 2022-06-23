@@ -34,7 +34,8 @@ async function saveEvents(timeOffEvents) {
   for (let timeOffEvent of timeOffEvents) {
     if (util.isSameOrAfterToday(timeOffEvent.eventDate)) {
       await calendar.events.insert({
-        calendarId: "primary",
+        //calendarId: "primary",
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
         requestBody: {
           summary: timeOffEvent.summary,
           start: {
