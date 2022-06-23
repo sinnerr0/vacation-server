@@ -1,7 +1,5 @@
 # kschoi service
 
-![Heroku](https://heroku-badge.herokuapp.com/?app=heroku-badge)
-
 ## Build & Launch
 
 ```bash
@@ -48,3 +46,7 @@ Release the newly pushed images to deploy your app.
 ```
 $ heroku container:release web --app kschoi
 ```
+
+## Architecture
+
+![architecture](docs/architecture.png)
