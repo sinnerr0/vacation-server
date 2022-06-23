@@ -1,4 +1,4 @@
-# alchera-dashboard
+# kschoi service
 
 ![Heroku](https://heroku-badge.herokuapp.com/?app=heroku-badge)
 
@@ -39,12 +39,12 @@ Push your Docker-based app
 Build the Dockerfile in the current directory and push the Docker image.
 
 ```
-$ heroku container:push web --app alchera
+$ heroku container:push web --app kschoi
 ```
 
 Deploy the changes
 Release the newly pushed images to deploy your app.
 
 ```
-$ heroku container:release web --app alchera
+$ heroku container:release web --app kschoi
 ```

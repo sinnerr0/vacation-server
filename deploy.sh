@@ -1,8 +1,8 @@
 #!/bin/bash
 docker stop vacation-server
+docker container rm vacation-server
 
 docker build -t vacation-server \
-  --build-arg PORT=80 \
   --build-arg SERVICE_KEY=$SERVICE_KEY \
   --build-arg CHOI_USERNAME=$CHOI_USERNAME \
   --build-arg CHOI_PASSWORD=$CHOI_PASSWORD \
@@ -12,6 +12,6 @@ docker build -t vacation-server \
   --build-arg GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID \
   .
 
-docker run --name vacation-server --rm -dp 3001:3001 vacation-server
+docker run --name vacation-server --env PORT=80 -dp 80:80 vacation-server
 
 echo "finished"

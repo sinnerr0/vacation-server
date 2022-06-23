@@ -48,18 +48,9 @@ function getHolidayList(holiday) {
 
 async function pullHoliday() {
   try {
-    let res = await axios.get("https://alchera.herokuapp.com/holidayThisMonth.json");
-    let holiday = res.data?.response?.body;
-    holidayThisMonth = getHolidayList(holiday);
-    res = await axios.get("https://alchera.herokuapp.com/holidayNextMonth.json");
-    holiday = res.data?.response?.body;
-    holidayNextMonth = getHolidayList(holiday);
-  } catch (e) {
-    try {
-      holidayThisMonth = getHolidayList(JSON.parse(fs.readFileSync(path.join(__dirname, "www", "holidayThisMonth.json")).toString()));
-      holidayNextMonth = getHolidayList(JSON.parse(fs.readFileSync(path.join(__dirname, "www", "holidayNextMonth.json")).toString()));
-    } catch (e) {}
-  }
+    holidayThisMonth = getHolidayList(JSON.parse(fs.readFileSync(path.join(__dirname, "www", "holidayThisMonth.json")).toString()));
+    holidayNextMonth = getHolidayList(JSON.parse(fs.readFileSync(path.join(__dirname, "www", "holidayNextMonth.json")).toString()));
+  } catch (e) { }
 }
 
 function makeDateListIgnoreHoliday(startDate, count) {

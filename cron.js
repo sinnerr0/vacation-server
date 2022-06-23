@@ -3,6 +3,7 @@ const dateFns = require("date-fns");
 const fs = require("fs");
 const path = require("path");
 const timeOff = require("./time-off");
+const redisDB = require("./redis-db");
 
 const directory = path.join(__dirname, "www");
 if (!fs.existsSync(directory)) {
@@ -36,6 +37,7 @@ var job = new CronJob(
   async function () {
     try {
       await processHoliday();
+      redisDB.saveData();
     } catch (e) {
       console.error(e);
     }

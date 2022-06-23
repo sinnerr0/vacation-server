@@ -6,10 +6,10 @@ const redisDB = require("./redis-db");
 // heroku sleep protect
 const https = require("https");
 setInterval(function () {
-  https.get("https://alchera.herokuapp.com/api/health");
+  https.get("https://kschoi.herokuapp.com/api/health");
 }, 600000);
 
-const corsOptions = { origin: "https://alchera.netlify.app" };
+const corsOptions = { origin: "*" };
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +27,7 @@ app.disable("x-powered-by");
 ////////////////
 let compression = require("compression");
 app.use(compression());
-const port = process.env.PORT ?? 3001;
+const port = 3001;
 
 app.get("/api/health", (req, res) => {
   res.sendStatus(200);

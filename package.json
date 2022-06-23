@@ -7,9 +7,7 @@
     "start": "npm-run-all -l -p start:*",
     "start:server": "node server.js",
     "start:cron": "node cron.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall:mac": "brew install imagemagick ghostscript poppler",
-    "preinstall:ubuntu": "sudo apt-get install imagemagick ghostscript poppler-utils"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",

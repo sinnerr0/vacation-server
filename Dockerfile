@@ -1,6 +1,6 @@
-FROM node:15-alpine
+FROM --platform=linux/amd64 node:15-alpine
 
-RUN apk update && apk add imagemagick ghostscript poppler-utils jq curl gettext nginx chromium bash && mkdir -p /run/nginx
+RUN apk update && apk add jq curl gettext nginx chromium bash && mkdir -p /run/nginx
 
 RUN npm i -g pm2
 
@@ -10,8 +10,6 @@ COPY package*.json ./
 RUN npm ci --only=production
 COPY . .
 
-ARG PORT
-ENV PORT=$PORT
 ARG SERVICE_KEY
 ENV SERVICE_KEY=$SERVICE_KEY
 ARG CHOI_USERNAME
@@ -26,11 +24,6 @@ ARG GOOGLE_TOKEN
 ENV GOOGLE_TOKEN=$GOOGLE_TOKEN
 ARG GOOGLE_CALENDAR_ID
 ENV GOOGLE_CALENDAR_ID=$GOOGLE_CALENDAR_ID
-ENV DOLLAR='$'
 
-CMD env
-COPY nginx.conf /etc/nginx/nginx.conf
-CMD envsubst < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf
-CMD cat /etc/nginx/nginx.conf
-CMD nginx
-CMD pm2 start server.js cron.js && pm2 logs
+COPY nginx.conf nginx.conf
+CMD env && set -e && envsubst '\$PORT' < nginx.conf > /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && nginx -t && nginx && pm2 start server.js cron.js && pm2 logs
