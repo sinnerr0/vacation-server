@@ -1,28 +1,34 @@
-const REDIS_URL = process.env.REDIS_URL;
-const redis = require("redis").createClient(REDIS_URL, {
-  return_buffers: true,
-});
 const fs = require("fs");
-const { promisify } = require("util");
-const mget = promisify(redis.mget).bind(redis);
-const mset = promisify(redis.mset).bind(redis);
+const path = require("path");
 
-redis.on("ready", async () => {
-  console.info("redis ready");
-});
+const REDIS_URL = process.env.REDIS_URL;
+let redis, mget, mset, dataKeys;
+if (REDIS_URL) {
+  redis = require("redis").createClient(REDIS_URL, {
+    return_buffers: true,
+  });
 
-redis.on("error", (err) => {
-  console.error(err);
-});
+  redis.on("ready", async () => {
+    console.debug("redis ready");
+  });
 
-const dataKeys = ["holidayNextMonth.json", "holidayThisMonth.json"];
+  redis.on("error", (err) => {
+    console.error(err);
+  });
+
+  const { promisify } = require("util");
+  mget = promisify(redis.mget).bind(redis);
+  mset = promisify(redis.mset).bind(redis);
+  dataKeys = ["holidayNextMonth.json", "holidayThisMonth.json"];
+}
 
 async function saveData() {
+  if (!REDIS_URL) return;
   try {
     let msetParams = [];
     for (const key of dataKeys) {
       try {
-        const data = fs.readFileSync(`www/${key}`);
+        const data = fs.readFileSync(path.join(__dirname, "www", key));
         msetParams.push(key);
         msetParams.push(data);
       } catch (error) {}
@@ -35,12 +41,13 @@ async function saveData() {
 }
 
 async function loadData() {
+  if (!REDIS_URL) return;
   try {
     const result = await mget(...dataKeys);
     let loadedKeys = [];
     for (const [index, data] of result.entries()) {
       try {
-        data && fs.writeFileSync(`www/${dataKeys[index]}`, data);
+        data && fs.writeFileSync(path.join(__dirname, "www", dataKeys[index]), data);
         loadedKeys.push(dataKeys[index]);
       } catch (error) {}
     }

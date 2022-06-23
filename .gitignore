@@ -4,6 +4,7 @@ node_modules
 .nuxt
 uploads
 test
+www
 
 # local env files
 .env.local
